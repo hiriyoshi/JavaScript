@@ -4,34 +4,51 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="./styles.css">
     <title>Dragon Slayer</title>
+    <link rel="icon" href="/images/dragonlogo.ico" type="image/x-icon">
   </head>
+  <nav class="navigation">
+    <ul class="nav-head">
+      <li class="nav-list"><a href="#"><img src="/images/dragon.png" alt=""></a></li>
+      <li class="nav-list"><a href="#"><span>Dragon Slayer</span></a></li>
+    </ul>
+  </nav>
+   
   <body>
     <div class="wrapper">
-    <div class="background-image"><img src="/basicGame/images/background.png" alt=""></div>
+      <div class="background-image">
+        <div class="imgright"><img src="/images/background-right.png" alt="background-image"></div>
+        <div class="imgright"><img src="/images/background-right.png" alt="background-image"></div>
+        <div class="imgright"><img src="/images/background-right.png" alt="background-image"></div>
+        <div class="imgright"><img src="/images/background-right.png" alt="background-image"></div>
+        <div class="imgright"><img src="/images/background-right.png" alt="background-image"></div>
+      </div>  
+      <div class="game-wrapper">
         <div id="game">
-            <div id="stats">
-              <span class="stat">XP: <strong><span id="xpText">0</span></strong></span>
-              <span class="stat">Health: <strong><span id="healthText">100</span></strong></span>
-              <span class="stat">Gold: <strong><span id="goldText">50</span></strong></span>
-            </div>
-            <div class="main-interface">
-              <div class="images"><img src="/basicGame/images/Storyline3.png" alt=""draggable="false"></div>
-            </div>
-            <div id="controls">
-              <p class="button-control">Controls</p>
-              <button id="button1">Go to store</button>
-              <button id="button2">Go to cave</button>
-              <button id="button3">Fight dragon</button>
-            </div>
-            <div id="monsterStats">
+          <div id="stats">
+            <span class="stat">Name: <strong><span id="name">Player</span></strong></span>   
+            <span class="stat">Health: <strong><span id="healthText">100</span></strong></span>   
+            <span class="stat">Gold: <strong><span id="goldText">50</span></strong></span>
+            <span class="stat">XP: <strong><span id="xpText">0</span></strong></span>         
+          </div>
+          <div class="main-interface">
+            <div class="images"><img src="/images/background.png" alt=""draggable="false"></div>
+            <div id="monsterStats"> 
               <span class="stat">Monster Name: <strong><span id="monsterName"></span></strong></span>
               <span class="stat">Health: <strong><span id="monsterHealth"></span></strong></span>
             </div>
             <div id="text">
               <p>Welcome to Dragon Slayer. You must defeat the dragon that is preventing people from leaving the town. You are in the town square. Where do you want to go? Use the buttons above.</p>
             </div>
+          </div>
+          <div class="mpt"></div>
+          <div id="controls">
+            <button id="button1">Go to store</button>
+            <button id="button2">Go to cave</button>
+            <button id="button3">Fight dragon</button>
+          </div>
         </div>
-        <script src="./script.js"></script>
-        </div>
+      </div>
+      <script src="./script.js"></script>
+    </div>
   </body>
 </html>
