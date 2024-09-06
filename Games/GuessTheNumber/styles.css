@@ -1,0 +1,24 @@
+body {
+    background-color: grey;
+}
+
+.game-container {
+    background-color: #fff;
+    padding: 20px;
+    width: 300px;
+    margin: auto;
+}
+#result{
+    color: green;
+}
+input {
+    padding: 10px;
+    margin: 10px;
+}
+
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}

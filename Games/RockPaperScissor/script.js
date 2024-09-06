@@ -61,7 +61,7 @@ function getRandomComputerResult() {
     resetGameBtn.style.display="none";  
     optionsContainer.style.display = "block";
   
-    winnerMsgElement.innerText= "";
+    winnerMsgElement.innerText="Your move and the computer move will show here.";
     roundResultsMsg.innerText="";
   };
   
