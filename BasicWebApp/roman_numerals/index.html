@@ -10,15 +10,20 @@
     <div class="title">
       <p>Roman Numeral Converter</p>
     </div>
-    <div class="wrapper">
+    <form action="">
+      <div class="wrapper">
       <div class="input">
       <label for="number">ENTER A NUMBER:</label>
       <input type="number" name="number" id="number" value="input-number">
-      <button id="convert-btn">CONVERT</button>
+      <button id="convert-btn" type="submit">CONVERT</button>
       </div>
+      </div>
+      <div class="output-wrapper">
+        <div class="result">
+          <p id="output"><span></span></p>
+        </div>
     </div>
-    <div class="result">
-      <p id="output"><span></span></p>
-    </div>
+    </form>
   </body>
+  <script src="script.js"></script>
 </html>
