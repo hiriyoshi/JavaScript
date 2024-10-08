@@ -13,17 +13,26 @@ let gold = 100;
 let health = 100;
 let currentHealth = 10;
 let showhealth = `${currentHealth}/${health}`;
+
 const home = () => update(loc[0])
 const guild = () => update(loc[1]);
 const wild = () => update(loc[2]);
 const cave = () => update(loc[3]);
 const store = () => update(loc[4]);
 const ranks = () => update(loc[5]);
-btn1.onclick = guild;
-btn2.onclick = wild;
-btn3.onclick = cave;
-btn4.onclick = store;
+const buySkill = () => update(loc[6]);
 
+const initializeStat = () =>{
+  healthStat.querySelector('span').innerText = showhealth;
+  goldStat.querySelector('span').innerText = gold;
+  weaponStat.querySelector('span').innerText = currentWeapon;
+  skillsStat.querySelector('span').innerText = currentSkill;
+  btn1.onclick = guild;
+  btn2.onclick = wild;
+  btn3.onclick = cave;
+  btn4.onclick = store;
+}
+initializeStat();
 const update = (place)=>{
     btn1.innerText = place["button text"][0];
     btn2.innerText = place["button text"][1];
@@ -34,9 +43,6 @@ const update = (place)=>{
     btn3.onclick = place["button func"][2];
     btn4.onclick = place["button func"][3];
     text.innerText = place.text;
-}
-const statsUpdate = () =>{
-
 }
 
 const restart = () =>{
@@ -52,7 +58,6 @@ const restart = () =>{
 }
 
 const guildHeal = () =>{
-  console.log()
   heal();
   guild();
 }
@@ -75,8 +80,10 @@ const buyHealth = () =>{
   if(gold>=10){
     gold -=10;
     health +=10;
+    currentHealth +=10;
+    showhealth = `${currentHealth}/${health}`;
     text.innerText = "You have purchased 10 Max Health. Glory to adventure!"
-    healthStat.querySelector('span').innerHTML = health;
+    healthStat.querySelector('span').innerHTML = showhealth;
     goldStat.querySelector('span').innerHTML = gold;  
   }
   else{
@@ -139,7 +146,7 @@ const skills = [
     name: "Bleed",
     detail: "a skill that will pierce through any enemy and make it bleed over time",
     power: 30,
-    gold: 150,
+    gold: 200,
   },
   {
     name: "bash",
@@ -147,7 +154,30 @@ const skills = [
     power: 50,
     gold: 300,
   }
-]
+];
+const poison = () =>{
+  if(gold>=50 && !currentSkill.some(char => char === 'Poison')){
+    currentSkill.push('Poison');
+    currentSkill.querySelector('span').innerText = 'Poison';
+    goldStat -= 50;
+    goldStat.querySelector('span').innerText = goldStat;
+    currentSkill.querySelector('span').innerText = currentSkill;
+  }
+  else{
+    text.innerText = "You do not have sufficient gold to buy this."
+  }  
+}
+const blind = () =>{
+  if(!currentSkill.some(char => char === 'Blind')){
+    currentSkill.push('Blind');
+  }
+}
+const bleed = () =>{
+  if(!currentSkill.some(char => char === 'Bleed')){
+    currentSkill.push('Bleed');
+  }
+}
+
 const wildEnemy = [
   {
     name: "Bandit",
@@ -223,7 +253,7 @@ const loc =[
     {
       name: "Store",
       "button text": ["Buy Weapon","Buy Skills","Buy Health","Guild"],
-      "button func" :[,,buyHealth,guildHeal],
+      "button func" :[,buySkill,buyHealth,guildHeal],
       text: "Welcome to the Store. Find anything fancy?"
     },
     {
@@ -232,6 +262,13 @@ const loc =[
       "button func" :[,,,guildHeal],
       text: "Welcome to Ranks. Are you up to become be champion? Fight the adventurer in the guild."
     },
+    {
+      name: "Skill",
+      "button text": ["Buy Poison for 50","Buy Blind for 100"," Buy Bleed for 200","Guild"],
+      "button func" :[poison,blind,bleed,guildHeal],
+      text: "Buying Skill will help you to become the greatest Adventurer! "
+    },
+    
     {
       name: "Defeat",
       "button text": ["Restart?","Restart?","Restart?","Restart?"],
