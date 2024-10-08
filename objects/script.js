@@ -13,6 +13,10 @@ let gold = 100;
 let health = 100;
 let currentHealth = 10;
 let showhealth = `${currentHealth}/${health}`;
+let btnUpdate = null;
+let intervalId;
+let healing;
+let heals = false;
 
 const home = () => update(loc[0])
 const guild = () => update(loc[1]);
@@ -21,6 +25,34 @@ const cave = () => update(loc[3]);
 const store = () => update(loc[4]);
 const ranks = () => update(loc[5]);
 const buySkill = () => update(loc[6]);
+const buyWeapon = () => update(loc[7]);
+const Defeat = () => update(loc[8]);
+const Win = () => update(loc[9]);
+
+const update = (place)=>{
+  btnUpdate = place;
+  btn1.innerText = place["button text"][0];
+  btn2.innerText = place["button text"][1];
+  btn3.innerText = place["button text"][2];
+  btn4.innerText = place["button text"][3]; 
+  btn1.onclick = place["button func"][0];
+  btn2.onclick = place["button func"][1];
+  btn3.onclick = place["button func"][2];
+  btn4.onclick = place["button func"][3];
+  text.innerText = place.text;
+}
+
+const liveUpdate = () => {
+  intervalId = setInterval(()=>{
+    console.log("live update");
+    showhealth = `${currentHealth}/${health}`;
+    healthStat.querySelector('span').innerText = showhealth;
+    goldStat.querySelector('span').innerText = gold;
+    weaponStat.querySelector('span').innerText = currentWeapon;
+    skillsStat.querySelector('span').innerText = currentSkill;
+  },1000)
+}
+
 
 const initializeStat = () =>{
   healthStat.querySelector('span').innerText = showhealth;
@@ -31,19 +63,55 @@ const initializeStat = () =>{
   btn2.onclick = wild;
   btn3.onclick = cave;
   btn4.onclick = store;
+  liveUpdate();
 }
 initializeStat();
-const update = (place)=>{
-    btn1.innerText = place["button text"][0];
-    btn2.innerText = place["button text"][1];
-    btn3.innerText = place["button text"][2];
-    btn4.innerText = place["button text"][3]; 
-    btn1.onclick = place["button func"][0];
-    btn2.onclick = place["button func"][1];
-    btn3.onclick = place["button func"][2];
-    btn4.onclick = place["button func"][3];
-    text.innerText = place.text;
-}
+
+btn1.addEventListener("click",()=>{
+  if(btnUpdate.name === "Guild"){
+    heal();
+    console.log("working");
+  }
+  else{
+    clearInterval(intervalId);
+    clearInterval(healing);
+    console.log("not");
+  }
+})
+btn2.addEventListener("click",()=>{
+  if(btnUpdate.name === "Guild"){
+    heal();
+    console.log("2working");
+  }
+  else{
+    clearInterval(intervalId);
+    clearInterval(healing);
+    console.log("not");
+  }
+})
+btn3.addEventListener("click",()=>{
+  if(btnUpdate.name === "Guild"){
+    heal();
+    console.log("3working");
+  }
+  else{
+    clearInterval(intervalId);
+    clearInterval(healing);
+    console.log("not");
+  }
+})
+btn4.addEventListener("click",()=>{
+  if(btnUpdate.name === "Guild"){
+    heal();
+    console.log("4working");
+  }
+  else{
+    clearInterval(intervalId);
+    clearInterval(healing);
+    console.log("not");
+  }
+})
+
 
 const restart = () =>{
   healthStat = 100;
@@ -64,15 +132,17 @@ const guildHeal = () =>{
 
 const heal = () =>{
   if(currentHealth<health){
-    const healing = setInterval(()=>{
-      if(currentHealth<health){
-        currentHealth +=1;
-        healthStat.innerText.span = showhealth;
+    healing = setInterval(()=>{
+      if(currentHealth<health && btnUpdate.name === "Guild"){
+        currentHealth +=2;
+        showhealth = `${currentHealth}/${health}`;
+        healthStat.querySelector('span').innerText = showhealth;
+        console.log("Healing");
       }
       else{
         clearInterval(healing);
       }
-    },300);
+    },1000);
   }
 }
 
@@ -87,7 +157,7 @@ const buyHealth = () =>{
     goldStat.querySelector('span').innerHTML = gold;  
   }
   else{
-    text.innerText = " You do not have sufficient gold to buy this."
+    text.innerText = " You do not have sufficient gold to buy Max health"
   }
 }
 
@@ -123,6 +193,10 @@ const weapons = [
     gold: 300
   },
 ];
+const bronzeSword = () =>{}
+const ironSword = () =>{}
+const silverSword = () =>{}
+const goldSword = () =>{}
 const skills = [
   {
     name: "confuse",
@@ -246,14 +320,14 @@ const loc =[
     },
     {
       name: "Cave",
-      "button text": ["Skills","Dodge","Observe","Flee"],
+      "button text": ["Attack","Dodge","Skills","Flee"],
       "button func" :[],
       text: `You have encounter an ${caveEnemy[Math.floor(Math.random()*3)].name} in the Cave.`
     },
     {
       name: "Store",
       "button text": ["Buy Weapon","Buy Skills","Buy Health","Guild"],
-      "button func" :[,buySkill,buyHealth,guildHeal],
+      "button func" :[buyWeapon,buySkill,buyHealth,guildHeal],
       text: "Welcome to the Store. Find anything fancy?"
     },
     {
@@ -268,7 +342,12 @@ const loc =[
       "button func" :[poison,blind,bleed,guildHeal],
       text: "Buying Skill will help you to become the greatest Adventurer! "
     },
-    
+    {
+      name: "Weapon",
+      "button text": ["Buy Bronze Sword for 50","Buy Iron Sword for 100"," Buy Silver Sword for 150","Guild"],
+      "button func" :[,,,guildHeal],
+      text: "Buying Weapon will help you to become the greatest Adventurer! "
+    },
     {
       name: "Defeat",
       "button text": ["Restart?","Restart?","Restart?","Restart?"],
