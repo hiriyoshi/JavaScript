@@ -40,18 +40,18 @@ body{
     text-decoration: none;
     color: rgb(7, 80, 225);
     text-shadow: 
-    3px 3px 3px white, /* Shadow to the right and bottom */
-    -1px 3px 3px white, /* Shadow to the left and bottom */
-    2px -2px 3px white, /* Shadow to the right and top */
-    -2px -2px 3px white; /* Shadow to the left and top */
+    3px 3px 3px white, 
+    -1px 3px 3px white, 
+    2px -2px 3px white, 
+    -2px -2px 3px white; 
 }
 .title a:hover{
     color: white;
     text-shadow: 
-    3px 3px 3px blue, /* Shadow to the right and bottom */
-    -1px 3px 3px blue, /* Shadow to the left and bottom */
-    2px -2px 3px blue, /* Shadow to the right and top */
-    -2px -2px 3px blue; /* Shadow to the left and top */
+    3px 3px 3px blue, 
+    -1px 3px 3px blue, 
+    2px -2px 3px blue, 
+    -2px -2px 3px blue; 
 }
 .buttons{
     display: flex;
@@ -88,7 +88,7 @@ button:hover:active{
     background-position: center;
     
 }
-.store{
+.editable{
     margin: 15px;
     width: 600px;
     margin: 0 auto;
@@ -112,10 +112,10 @@ button:hover:active{
     display: flex;
     justify-content: space-around;
     text-shadow: 
-    3px 3px 3px white, /* Shadow to the right and bottom */
-    -1px 3px 3px white, /* Shadow to the left and bottom */
-    2px -2px 3px white, /* Shadow to the right and top */
-    -2px -2px 3px white; /* Shadow to the left and top */
+    3px 3px 3px white, 
+    -1px 3px 3px white, 
+    2px -2px 3px white, 
+    -2px -2px 3px white; 
 }
 .statsarea{
     display: grid;
@@ -139,10 +139,10 @@ button:hover:active{
     margin: 5px;
     padding: 4px;
     text-shadow: 
-    3px 3px 3px white, /* Shadow to the right and bottom */
-    -1px 3px 3px white, /* Shadow to the left and bottom */
-    2px -2px 3px white, /* Shadow to the right and top */
-    -2px -2px 3px white; /* Shadow to the left and top */
+    3px 3px 3px white, 
+    -1px 3px 3px white, 
+    2px -2px 3px white, 
+    -2px -2px 3px white; 
 }
 .stats-head{
     margin: 0 auto;
@@ -167,67 +167,67 @@ button:hover:active{
     color: white;
     padding: 2px;
     text-shadow: 
-    3px 3px 3px black, /* Shadow to the right and bottom */
-    -1px 3px 3px black, /* Shadow to the left and bottom */
-    2px -2px 3px black, /* Shadow to the right and top */
-    -2px -2px 3px black; /* Shadow to the left and top */
+    3px 3px 3px black, 
+    -1px 3px 3px black, 
+    2px -2px 3px black, 
+    -2px -2px 3px black; 
 }
 .health span{
     color: red;
     text-shadow: 
-    3px 3px 3px white, /* Shadow to the right and bottom */
-    -1px 3px 3px white, /* Shadow to the left and bottom */
-    2px -2px 3px white, /* Shadow to the right and top */
-    -2px -2px 3px white; /* Shadow to the left and top */
+    3px 3px 3px white, 
+    -1px 3px 3px white, 
+    2px -2px 3px white, 
+    -2px -2px 3px white; 
 }
 .skills{
     color: white;
     padding: 2px;
     text-shadow: 
-    3px 3px 3px black, /* Shadow to the right and bottom */
-    -1px 3px 3px black, /* Shadow to the left and bottom */
-    2px -2px 3px black, /* Shadow to the right and top */
-    -2px -2px 3px black; /* Shadow to the left and top */
+    3px 3px 3px black, 
+    -1px 3px 3px black, 
+    2px -2px 3px black, 
+    -2px -2px 3px black; 
 }
 .skills span{
     color: rgb(12, 28, 252);
     text-shadow: 
-    3px 3px 3px white, /* Shadow to the right and bottom */
-    -1px 3px 3px white, /* Shadow to the left and bottom */
-    2px -2px 3px white, /* Shadow to the right and top */
-    -2px -2px 3px white; /* Shadow to the left and top */
+    3px 3px 3px white, 
+    -1px 3px 3px white, 
+    2px -2px 3px white, 
+    -2px -2px 3px white; 
 }
 .gold{
     color: white;
     padding: 2px;
     text-shadow: 
-    3px 3px 3px black, /* Shadow to the right and bottom */
-    -1px 3px 3px black, /* Shadow to the left and bottom */
-    2px -2px 3px black, /* Shadow to the right and top */
-    -2px -2px 3px black; /* Shadow to the left and top */
+    3px 3px 3px black, 
+    -1px 3px 3px black, 
+    2px -2px 3px black, 
+    -2px -2px 3px black; 
 }
 .gold span{
     color: yellow;
     text-shadow: 
-    3px 3px 3px white, /* Shadow to the right and bottom */
-    -1px 3px 3px white, /* Shadow to the left and bottom */
-    2px -2px 3px white, /* Shadow to the right and top */
-    -2px -2px 3px white; /* Shadow to the left and top */
+    3px 3px 3px white, 
+    -1px 3px 3px white, 
+    2px -2px 3px white, 
+    -2px -2px 3px white; 
 }
 .weapon{
     color: white;
     padding: 2px;
     text-shadow: 
-    3px 3px 3px black, /* Shadow to the right and bottom */
-    -1px 3px 3px black, /* Shadow to the left and bottom */
-    2px -2px 3px black, /* Shadow to the right and top */
-    -2px -2px 3px black; /* Shadow to the left and top */
+    3px 3px 3px black, 
+    -1px 3px 3px black, 
+    2px -2px 3px black, 
+    -2px -2px 3px black; 
 }
 .weapon span{
     color: green;
     text-shadow: 
-    3px 3px 3px white, /* Shadow to the right and bottom */
-    -1px 3px 3px white, /* Shadow to the left and bottom */
-    2px -2px 3px white, /* Shadow to the right and top */
-    -2px -2px 3px white; /* Shadow to the left and top */
+    3px 3px 3px white, 
+    -1px 3px 3px white, 
+    2px -2px 3px white, 
+    -2px -2px 3px white; 
 }
