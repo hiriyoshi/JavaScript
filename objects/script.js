@@ -11,19 +11,21 @@ const skillsStat = document.querySelector('.skills');
 let currentWeapon = ["Wooden Sword"];
 let currentSkill = [];
 let gold = 500;
-let health = 100;
-let currentHealth = 10;
+let health = 50;
+let currentHealth = 40;
 let showhealth = `${currentHealth}/${health}`;
 let btnUpdate = null;
 let intervalId;
 let healing;
 let heals = false;
+let isConfuse = false;
+let isBleed = false;
+let isPoison  = false;
 const home = () => update(loc[0]);
 const guild = () => update(loc[1]);
+
 let currentMonsterHealth =0;
-// if(){
-//   currentMonsterHealth = wildEnemy[0].health;
-// }
+
 
 const wild = (enemyIndex) => {
   update(loc[2]);
@@ -62,10 +64,48 @@ const wild = (enemyIndex) => {
   monsterHealth.style.color = "white";
   monsterHealth.style.textShadow = "3px 3px 3px red, 1px 3px 3px red, 2px -2px 3px red, -2px -2px 3px red";
   div.appendChild(monsterHealth);
-  console.log(`Wild ${currentMonsterHealth}`);
 
 }
-const cave = () => update(loc[3]);
+const cave = (enemyIndex) => {
+  update(loc[3]);
+  let healthEnemy = caveEnemy[0].health;
+  const name = caveEnemy[0].name;
+  currentMonsterHealth = caveEnemy[0].health;
+  //effects 
+
+  const div = document.createElement('div');
+  div.className = "monsterstat";
+  div.style.display = "flex";
+  div.style.alignItems = "center";
+  div.style.justifyContent = "center";
+  editable.appendChild(div);
+
+  const monsterName = document.createElement('p');
+  monsterName.innerHTML = `Enemy Name: ${name}`;
+  monsterName.style.width = "200px";
+  monsterName.style.height = "30px";
+  monsterName.style.display = "flex";
+  monsterName.style.alignItems = "center";
+  monsterName.style.fontWeight = "bold";
+  monsterName.style.color = "white";
+  monsterName.style.textShadow = "3px 3px 3px red, 1px 3px 3px red, 2px -2px 3px red, -2px -2px 3px red";
+  div.appendChild(monsterName);
+
+  //Enemy Stat 
+  
+  const monsterHealth = document.createElement('p');
+  monsterHealth.className = "monsterHealth";
+  monsterHealth.innerHTML = `Enemy Health: ${currentMonsterHealth} / ${healthEnemy}`;
+  monsterHealth.style.width = "200px";
+  monsterHealth.style.height = "30px";
+  monsterHealth.style.display = "flex";
+  monsterHealth.style.alignItems = "center";
+  monsterHealth.style.fontWeight = "bold";
+  monsterHealth.style.color = "white";
+  monsterHealth.style.textShadow = "3px 3px 3px red, 1px 3px 3px red, 2px -2px 3px red, -2px -2px 3px red";
+  div.appendChild(monsterHealth);
+
+}
 const store = () => update(loc[4]);
 const ranks = () => update(loc[5]);
 const buySkill = () => update(loc[6]);
@@ -115,12 +155,12 @@ initializeStat();
 btn1.addEventListener("click",()=>{
   if(btnUpdate.name === "Guild"){
     heal();
-    console.log("working");
+    console.log("Healing");
   }
   else{
     clearInterval(intervalId);
     clearInterval(healing);
-    console.log("not");
+    console.log("not healing!");
   }
 })
 btn2.addEventListener("click",()=>{
@@ -148,12 +188,11 @@ btn3.addEventListener("click",()=>{
 btn4.addEventListener("click",()=>{
   if(btnUpdate.name === "Guild"){
     heal();
-    console.log("4working");
   }
   else{
     clearInterval(intervalId);
     clearInterval(healing);
-    console.log("not");
+    console.log("not healing");
   }
 })
 
@@ -357,6 +396,7 @@ const poison = () =>{
     skillsStat.querySelector('span').innerText = currentSkill;
     text.innerText = "You have purchased a skill 'Poison'. Glory to Adventure!"
     poisonActive();
+    loc[10]["button text"][1] = "Poison";
   }
   else if(currentSkill.some(char => char === 'Poison')){
     text.innerText = " You already have a skill 'Poison'.";
@@ -373,6 +413,7 @@ const confuse= () =>{
     currentSkill.push("Confuse");
     skillsStat.querySelector('span').innerText = currentSkill;
     text.innerText = "You have purchased a skill 'Confuse'. Glory to Adventure!"
+    loc[10]["button text"][0] = "Confuse";
     confuseActive();
   }
   else if(currentSkill.some(char => char === 'Confuse')){
@@ -392,6 +433,7 @@ const bleed = () =>{
     skillsStat.querySelector('span').innerText = currentSkill;
     text.innerText = "You have purchased a skill 'Bleed'. Glory to Adventure!"
     bleedActive();
+    loc[10]["button text"][2] = "Bleed";
   }
   else if(currentSkill.some(char => char === 'Bleed')){
     text.innerText = " You already have a skill 'Bleed'.";
@@ -501,11 +543,14 @@ const flee = () =>{
   }
   else{
     text.innerText = "You have Failed to Flee."
+    enemyAttack();
   }
 }
 const confuseActive = () =>{
   if(currentSkill.includes('Confuse')){
-    return `Confuse`;
+    const confuseLoc = loc.find(loc => loc.name === "activeSkills");
+    confuseLoc["button text"][0].loc = 'Confuse';
+    return 'Confuse';
   }
   else{
     return "N/A";
@@ -530,28 +575,124 @@ const bleedActive = () =>{
 const backFunction = () =>{
   update(loc[2]);
 }
-const usedConfuse = () =>{}
-const usedPoison = () =>{}
-const usedBleed = () =>{}
+const usedConfuse = () =>{
+  const confuseChances = Math.floor(Math.random()*100+1);
+  if(loc[10]["button text"][0] !=="N/A"){
+    if(isConfuse){
+      text.innerText = "The enemy is already 'Confuse'.";
+    }
+    else{
+      if(confuseChances>=80){
+        text.innerText = "You have used 'Confuse' on the enemy!";
+        isConfuse = true;
+      }
+      else{
+        text.innerText = "The enemy have resisted the skill 'Confuse'.";
+        isConfuse = false;
+      }
+    }
+  }
+  else{
+    text.innerText = "You have not bought this skill yet!";
+  }
+}
+const usedPoison = () =>{
+  const poisonChances = Math.floor(Math.random()*100+1);
+  if(loc[10]["button text"][0] !=="N/A"){
+    if(isPoison){
+      text.innerText = "The enemy is already 'Confuse'.";
+    }
+    else{
+      if(poisonChances>=80){
+        text.innerText = "You have used 'Poison' on the enemy!"
+        isPoison = true;
+      }
+      else{
+        text.innerText = "The enemy have resisted the skill 'Poison'."
+        isPoison = false;
+      }
+    }
+  }
+  else{
+    text.innerText = "You have not bought this skill yet!"
+  }
+}
+const usedBleed = () =>{  
+  const bleedChances = Math.floor(Math.random()*100+1);
+    if(loc[10]["button text"][0] !=="N/A"){
+    if(isBleed){
+      text.innerText = "The enemy is already 'Confuse'.";
+    }
+    else{
+      if(bleedChances>=80){
+        text.innerText = "You have used 'Bleed' on the enemy!"
+        isBleed = true;
+        enemyAttack();
+        back();
+      }
+      else{
+        text.innerText = "The enemy have resisted the skill 'Bleed'."
+        isBleed = false;
+        enemyAttack();
+        back();
+      }
+    }
+  }
+  else{
+    text.innerText = "You have not bought this skill yet!"    
+  }
+}
 const usedBash = () =>{}
-
 const attack = async () => {
   let monsterStats = document.querySelector('.monsterstat');
   let enemyHealth = document.querySelector('.monsterHealth');
-  text.innerText = "The " + wildEnemy[0].name + " attacks.";
-  text.innerText += " You attack it with your " + currentWeapon[0] + ".";
+  text.innerText = " You attack it with your " + currentWeapon[0] + ".";
   const myWeapon = weapons.find(weapon => weapon.name === currentWeapon[0])?.power;
   const enemyWeapon = wildEnemy[0].power;
   const Maxenemy = wildEnemy[0].health;
 
   currentMonsterHealth = Math.max(0,currentMonsterHealth-myWeapon);
-  console.log(`${currentMonsterHealth} attacks`);
   enemyHealth.innerText = `Enemy Health: ${currentMonsterHealth}/${wildEnemy[0].health}`;
   
+
+  if(isConfuse){
+
+  }
+  if(isPoison){}
+  if(isBleed){}
   if(currentMonsterHealth<=0){
     text.innerText = `You have defeated ${wildEnemy[0].name}.`;
     gold += wildEnemy[0].power;
-    console.log(gold);
+    goldStat.querySelector('span').innerText = gold;
+    await new Promise(resolve => setTimeout(()=>{
+      if (monsterStats) {
+        monsterStats.remove();
+      }
+      guild();
+    },2000))
+    // const remove = document.querySelector('.monsterstat');
+    // if (remove) {
+    //   remove.remove();
+    // }
+    // guild();
+  }
+  enemyAttack();
+
+};
+const caveattack = async() => {
+  let monsterStats = document.querySelector('.monsterstat');
+  let enemyHealth = document.querySelector('.monsterHealth');
+  text.innerText = " You attack it with your " + currentWeapon[0] + ".";
+  const myWeapon = weapons.find(weapon => weapon.name === currentWeapon[0])?.power;
+  const enemyWeapon = caveEnemy[0].power;
+  const Maxenemy = caveEnemy[0].health;
+
+  currentMonsterHealth = Math.max(0,currentMonsterHealth-myWeapon);
+  enemyHealth.innerText = `Enemy Health: ${currentMonsterHealth}/${caveEnemy[0].health}`;
+  
+  if(currentMonsterHealth<=0){
+    text.innerText = `You have defeated ${caveEnemy[0].name}.`;
+    gold += caveEnemy[0].power;
     goldStat.querySelector('span').innerText = gold;
     await new Promise(resolve => setTimeout(()=>{
       if (monsterStats) {
@@ -566,18 +707,21 @@ const attack = async () => {
     // guild();
   }
 
-  console.log(`${currentMonsterHealth} attacks after`);
+  enemyAttack();
+
+};
+const enemyAttack = async() =>{
+  const enemyWeapon = wildEnemy[0].power;
+  const Maxenemy = wildEnemy[0].health;
+  
   currentHealth = Math.max(0,currentHealth-enemyWeapon);  
-  healthStat.querySelector('span').innerText = `${currentHealth}/${health}`;
+  healthStat.querySelector('span').innerText = `${currentHealth}/${health}`;  
+  text.innerText += "The " + caveEnemy[0].name + " attacks.";
   currentHealth.innerText = `Enemy Health: ${currentHealth}/${health}`;
   if(currentHealth<=0){
     Defeat();
   }
-
-  console.log(currentMonsterHealth);
-  console.log(currentHealth);
-};
-
+}
 //missing skill,ranks
 const loc =[
     {
@@ -601,7 +745,7 @@ const loc =[
     {
       name: "Cave",
       "button text": ["Attack","Skills","Dodge","Flee"],
-      "button func" :[attack,activeSkill,dodge,flee],
+      "button func" :[caveattack,activeSkill,dodge,flee],
       text: `You have encounter an Enemy.`
     },
     {
@@ -632,7 +776,7 @@ const loc =[
       name: "Defeat",
       "button text": ["Restart?","Restart?","Restart?","Restart?"],
       "button func" :[restart,restart,restart,restart],
-      text: "You have died. Restart?"
+      text: "You Die. Restart?"
     },
     {
       name: "Win",
@@ -649,12 +793,10 @@ const loc =[
     {
       name: "Back",
       "button text": ["Attack","Skills","Dodge","Flee"],
-      "button func" :[attack,activeSkill,dodge,flee],
-      text: `You have encounter an ${wildEnemyRandom()}`
+      "button func" :[attack,activeSkill,dodge,flee]
     }
 ];
-
-/* dps
+/* dps  
 // Check if poison skill is active
   if (currentSkill.includes("Poison")) {
     text.innerText = `You attack with your ${currentWeapon[0]} and apply poison to ${currentEnemy}!`;
