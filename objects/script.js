@@ -524,11 +524,15 @@ const liveFight = () =>{
 
 const dodge = () =>{
   const fleePercentage = Math.floor(Math.random()*100)+1;
+  const enemyWeapon = wildEnemy[0].power;
   if(fleePercentage<=80){
-    text.innerText = "You have Successfully dodge the attack."
+    text.innerText = `You have Successfully dodge the attack. As you have dodge the enemy, you saw it's power which is ${enemyWeapon};`
+    back;
   }
   else{
     text.innerText = "You have Failed to dodge the attack."
+    enemyAttack();
+    back;
   }
 }
 
@@ -544,6 +548,7 @@ const flee = () =>{
   else{
     text.innerText = "You have Failed to Flee."
     enemyAttack();
+    back;
   }
 }
 const confuseActive = () =>{
@@ -585,10 +590,12 @@ const usedConfuse = () =>{
       if(confuseChances>=80){
         text.innerText = "You have used 'Confuse' on the enemy!";
         isConfuse = true;
+        back;
       }
       else{
         text.innerText = "The enemy have resisted the skill 'Confuse'.";
         isConfuse = false;
+        back;
       }
     }
   }
@@ -606,10 +613,12 @@ const usedPoison = () =>{
       if(poisonChances>=80){
         text.innerText = "You have used 'Poison' on the enemy!"
         isPoison = true;
+        back;
       }
       else{
         text.innerText = "The enemy have resisted the skill 'Poison'."
         isPoison = false;
+        back;
       }
     }
   }
@@ -628,13 +637,13 @@ const usedBleed = () =>{
         text.innerText = "You have used 'Bleed' on the enemy!"
         isBleed = true;
         enemyAttack();
-        back();
+        back;
       }
       else{
         text.innerText = "The enemy have resisted the skill 'Bleed'."
         isBleed = false;
         enemyAttack();
-        back();
+        back;
       }
     }
   }
@@ -656,7 +665,28 @@ const attack = async () => {
   
 
   if(isConfuse){
+    // blind, hit itself, do nothing,
 
+
+    const isConfuseEffect = Math.floor(Math.random()*100+1);
+    if(isConfuseEffect>=20){
+      text.innerText += "The enemy is 'Confuse' and it did nothing.";
+    }
+    if(isConfuseEffect>=20 && isConfuseEffect<40){
+      text.innerText += "The enemy is 'Confuse' and it hit itself";
+      const enemyWeapon = wildEnemy[0].power;
+      const Maxenemy = wildEnemy[0].health;
+      
+      Maxenemy = Math.max(0,Maxenemy-enemyWeapon);
+      healthStat.querySelector('span').innerText = `${currentHealth}/${health}`;
+      currentHealth.innerText = `Enemy Health: ${currentHealth}/${health}`;
+    }
+    if(isConfuseEffect>=40 && isConfuseEffect<60){
+      text.innerText += "The enemy is 'Confuse' and it miss it's attack";
+    }
+    if(isConfuseEffect>=60){
+      enemyAttack();
+    }
   }
   if(isPoison){}
   if(isBleed){}
@@ -677,7 +707,6 @@ const attack = async () => {
     // guild();
   }
   enemyAttack();
-
 };
 const caveattack = async() => {
   let monsterStats = document.querySelector('.monsterstat');
