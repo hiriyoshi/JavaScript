@@ -21,17 +21,20 @@ let heals = false;
 let isConfuse = false;
 let isBleed = false;
 let isPoison  = false;
+let effectContinue = false;
+let effectCountConfuse = 0;
+let effectCountBleed = 0;
+let effectCountPoison = 0;
+let currentMonsterHealth = 0;
+let currentMonsterName = 0;
 const home = () => update(loc[0]);
 const guild = () => update(loc[1]);
-
-let currentMonsterHealth =0;
-
-
-const wild = (enemyIndex) => {
+const wild = () => {
   update(loc[2]);
   let healthEnemy = wildEnemy[0].health;
   const name = wildEnemy[0].name;
   currentMonsterHealth = wildEnemy[0].health;
+  currentMonsterName = wildEnemy[0].name;
 
   const div = document.createElement('div');
   div.className = "monsterstat";
@@ -66,11 +69,13 @@ const wild = (enemyIndex) => {
   div.appendChild(monsterHealth);
 
 }
-const cave = (enemyIndex) => {
+const cave = () => {
+  console.log(currentMonsterName === wildEnemy[0].name);
   update(loc[3]);
   let healthEnemy = caveEnemy[0].health;
   const name = caveEnemy[0].name;
   currentMonsterHealth = caveEnemy[0].health;
+  currentMonsterName = caveEnemy[0].name;
   //effects 
 
   const div = document.createElement('div');
@@ -108,12 +113,13 @@ const cave = (enemyIndex) => {
 }
 const store = () => update(loc[4]);
 const ranks = () => update(loc[5]);
-const buySkill = () => update(loc[6]);
+const buySkill = () => update(loc[6]); 
 const buyWeapon = () => update(loc[7]);
 const Defeat = () => update(loc[8]);
 const Win = () => update(loc[9]);
 const activeSkill = () => update(loc[10]);
 const back = () => update(loc[11]);
+const backcave = () => update(loc[12]);
 const update = (place)=>{
   btnUpdate = place;
   btn1.innerText = place["button text"][0];
@@ -461,7 +467,7 @@ const bash = () =>{
 const wildEnemy = [
   {
     name: "Bandit",
-    health: 30,
+    health: 50,
     power: Math.floor(Math.random()*(12-4))+5,
     gold: Math.floor(Math.random()*(12-4))+5,
   },
@@ -481,7 +487,7 @@ const wildEnemy = [
 const caveEnemy = [
   {
     name: "Bat",
-    health: 40,
+    health: 100,
     power: Math.floor(Math.random()*(20-8))+10,
     gold: Math.floor(Math.random()*(20-8))+10,
   },
@@ -527,12 +533,40 @@ const dodge = () =>{
   const enemyWeapon = wildEnemy[0].power;
   if(fleePercentage<=80){
     text.innerText = `You have Successfully dodge the attack. As you have dodge the enemy, you saw it's power which is ${enemyWeapon};`
-    back;
+    if(currentMonsterName === wildEnemy[0].name){
+      back;
+    }
+    else{
+      backcave();
+    }
   }
   else{
     text.innerText = "You have Failed to dodge the attack."
     enemyAttack();
-    back;
+    if(currentMonsterName === wildEnemy[0].name){
+      back;
+    }
+    else{
+      backcave();
+    }
+  }
+  if(isConfuse){
+    effectCountConfuse+=1;
+    if(effectCountConfuse===3){
+      isConfuse = false;
+    }
+  }
+  if(isBleed){
+    effectCountBleed+=1;
+    if(effectCountBleed===3){
+      isBleed = false;
+    }
+  }
+  if(isPoison){
+    effectCountPoison+=1;
+    if(effectCountPoison===3){
+      isBleed = false;
+    }
   }
 }
 
@@ -542,13 +576,21 @@ const flee = () =>{
     const remove = document.querySelector('.monsterstat');
     if (remove) {
       remove.remove();
+      isConfuse = false;
+      isBleed = false;
+      isPoison = false;
     }
     guild();
   }
   else{
     text.innerText = "You have Failed to Flee."
     enemyAttack();
-    back;
+    if(currentMonsterName === wildEnemy[0].name){
+      back;
+    }
+    else{
+      backcave();
+    }
   }
 }
 const confuseActive = () =>{
@@ -580,22 +622,52 @@ const bleedActive = () =>{
 const backFunction = () =>{
   update(loc[2]);
 }
-const usedConfuse = () =>{
+
+//difference between attack and attackcave
+const usedConfuse = async() =>{
   const confuseChances = Math.floor(Math.random()*100+1);
   if(loc[10]["button text"][0] !=="N/A"){
     if(isConfuse){
       text.innerText = "The enemy is already 'Confuse'.";
-    }
-    else{
-      if(confuseChances>=80){
-        text.innerText = "You have used 'Confuse' on the enemy!";
-        isConfuse = true;
+      if(currentMonsterName === wildEnemy[0].name){
         back;
       }
       else{
-        text.innerText = "The enemy have resisted the skill 'Confuse'.";
-        isConfuse = false;
-        back;
+        backcave();
+      }
+    }
+    else{
+      if (confuseChances<=80) {        
+          text.innerText = "You have used 'Confuse' on the enemy! and it is successful.";
+          isConfuse = true;
+        await new Promise(resolve => setTimeout(()=>{
+          if(currentMonsterName === wildEnemy[0].name){
+            update(loc[11]);
+          }
+          else{
+            update(loc[12]);
+          }
+      },2000))
+      }
+      else{
+        text.innerText = "The enemy have resisted the skill 'Confuse'. And it attack.";
+       
+        if(currentMonsterName === wildEnemy[0].name){
+          enemyAttack();
+        }
+        else{
+          enemyAttackCave();
+        }
+        await new Promise(resolve => setTimeout(()=>{
+          isConfuse = false;
+          if(currentMonsterName === wildEnemy[0].name){
+            back;
+          }
+          else{
+            backcave();
+          }
+        },2000))
+
       }
     }
   }
@@ -603,52 +675,101 @@ const usedConfuse = () =>{
     text.innerText = "You have not bought this skill yet!";
   }
 }
-const usedPoison = () =>{
+const usedPoison = async() =>{
   const poisonChances = Math.floor(Math.random()*100+1);
-  if(loc[10]["button text"][0] !=="N/A"){
+  if(loc[10]["button text"][1] !=="N/A"){
     if(isPoison){
-      text.innerText = "The enemy is already 'Confuse'.";
-    }
-    else{
-      if(poisonChances>=80){
-        text.innerText = "You have used 'Poison' on the enemy!"
-        isPoison = true;
+      text.innerText = "The enemy is already 'Poison'.";
+      if(currentMonsterName === wildEnemy[0].name){
         back;
       }
       else{
-        text.innerText = "The enemy have resisted the skill 'Poison'."
-        isPoison = false;
-        back;
+        backcave();
+      }
+    }
+    else{
+      if (poisonChances<=80) {
+          text.innerText = "You have used 'Poison' on the enemy! and it is successful.";
+          isPoison = true;
+        await new Promise(resolve => setTimeout(()=>{
+          if(currentMonsterName === wildEnemy[0].name){
+            update(loc[11]);
+          }
+          else{
+            update(loc[12]);
+          }
+      },2000))
+      }
+      else{
+        text.innerText = "The enemy have resisted the skill 'Poison'. And it attack.";
+        await new Promise(resolve => setTimeout(()=>{
+          isPoison = false;
+          if(currentMonsterName === wildEnemy[0].name){
+            back;
+          }
+          else{
+            backcave();
+          }
+        },2000))
       }
     }
   }
   else{
-    text.innerText = "You have not bought this skill yet!"
+    text.innerText = "You have not bought this skill yet!";
   }
 }
-const usedBleed = () =>{  
+const usedBleed = async() =>{
+  
   const bleedChances = Math.floor(Math.random()*100+1);
-    if(loc[10]["button text"][0] !=="N/A"){
+  if(loc[10]["button text"][2] !=="N/A"){
     if(isBleed){
-      text.innerText = "The enemy is already 'Confuse'.";
-    }
-    else{
-      if(bleedChances>=80){
-        text.innerText = "You have used 'Bleed' on the enemy!"
-        isBleed = true;
-        enemyAttack();
+      text.innerText = "The enemy is already 'Bleed'.";
+      
+      if(currentMonsterName === wildEnemy[0].name){
         back;
       }
       else{
-        text.innerText = "The enemy have resisted the skill 'Bleed'."
-        isBleed = false;
-        enemyAttack();
-        back;
+        backcave();
+      }
+    }
+    else{
+      if (bleedChances<=80) {
+        
+          text.innerText = "You have used 'Bleed' on the enemy! and it is successful.";
+          isBleed = true;
+        await new Promise(resolve => setTimeout(()=>{
+          if(currentMonsterName === wildEnemy[0].name){
+            update(loc[11]);
+          }
+          else{
+            update(loc[12]);
+          }
+      },2000))
+      }
+      else{
+        text.innerText = "The enemy have resisted the skill 'Bleed'. And it attack.";
+        
+        if(currentMonsterName === wildEnemy[0].name){
+          enemyAttack();
+        }
+        else{
+          enemyAttackCave();
+        }
+        await new Promise(resolve => setTimeout(()=>{
+          isBleed = false;
+          if(currentMonsterName === wildEnemy[0].name){
+            back;
+          }
+          else{
+            backcave();
+          }
+          
+        },2000))
       }
     }
   }
   else{
-    text.innerText = "You have not bought this skill yet!"    
+    text.innerText = "You have not bought this skill yet!";
   }
 }
 const usedBash = () =>{}
@@ -658,38 +779,124 @@ const attack = async () => {
   text.innerText = " You attack it with your " + currentWeapon[0] + ".";
   const myWeapon = weapons.find(weapon => weapon.name === currentWeapon[0])?.power;
   const enemyWeapon = wildEnemy[0].power;
-  const Maxenemy = wildEnemy[0].health;
+  let Maxenemy = wildEnemy[0].health;
 
+  
   currentMonsterHealth = Math.max(0,currentMonsterHealth-myWeapon);
   enemyHealth.innerText = `Enemy Health: ${currentMonsterHealth}/${wildEnemy[0].health}`;
   
-
+  
   if(isConfuse){
+    effectCountConfuse+=1;
+    if(effectCountConfuse===3){
+      isConfuse = false;
+    }
     // blind, hit itself, do nothing,
-
-
     const isConfuseEffect = Math.floor(Math.random()*100+1);
     if(isConfuseEffect>=20){
-      text.innerText += "The enemy is 'Confuse' and it did nothing.";
+      text.innerText = "The enemy is 'Confuse' and it did nothing.";
     }
-    if(isConfuseEffect>=20 && isConfuseEffect<40){
-      text.innerText += "The enemy is 'Confuse' and it hit itself";
+    else if(isConfuseEffect>20 && isConfuseEffect<=40){
+      text.innerText = "The enemy is 'Confuse' and it hit itself";
       const enemyWeapon = wildEnemy[0].power;
-      const Maxenemy = wildEnemy[0].health;
+      Maxenemy = wildEnemy[0].health;
       
       Maxenemy = Math.max(0,Maxenemy-enemyWeapon);
       healthStat.querySelector('span').innerText = `${currentHealth}/${health}`;
       currentHealth.innerText = `Enemy Health: ${currentHealth}/${health}`;
+      
     }
-    if(isConfuseEffect>=40 && isConfuseEffect<60){
-      text.innerText += "The enemy is 'Confuse' and it miss it's attack";
+    else if(isConfuseEffect>40 && isConfuseEffect<=60){
+      text.innerText = "The enemy is 'Confuse' and it miss it's attack";
     }
-    if(isConfuseEffect>=60){
+    else{
       enemyAttack();
     }
   }
-  if(isPoison){}
-  if(isBleed){}
+  if(isPoison){
+    effectCountPoison+=1;
+    if(effectCountPoison===3){
+      isConfuse = false;
+    }
+    // blind, hit itself, do nothing,
+    const isPoisonEffect = Math.floor(Math.random()*100+1);
+    
+    if(isPoisonEffect>=0 && isPoisonEffect<80){
+      text.innerText += "The enemy is 'Poison' and it takes 10 damage.";
+      if(!currentHealth<=0){
+        const poisondamage = 10;
+        currentMonsterHealth = Math.max(0,currentMonsterHealth-poisondamage);
+        enemyHealth.innerText = `Enemy Health: ${currentMonsterHealth}/${wildEnemy[0].health}`;
+        Maxenemy = Math.max(0,Maxenemy-10);
+        healthStat.querySelector('span').innerText = `${currentHealth}/${health}`;
+        currentHealth.innerText = `Enemy Health: ${currentHealth}/${health}`;
+      }
+      else{
+        text.innerText = `You have defeated ${wildEnemy[0].name}.`;
+        gold += wildEnemy[0].power;
+        goldStat.querySelector('span').innerText = gold;
+        await new Promise(resolve => setTimeout(()=>{
+          if (monsterStats) {
+            monsterStats.remove();
+            isConfuse = false;
+            isBleed = false;
+            isPoison = false;
+          }
+          guild();
+        },2000))
+          }
+    }
+    else if(isPoisonEffect>=80 && isPoisonEffect<=100){
+      text.innerText = "The enemy have resisted the poison";
+      isPoison = false;      
+      enemyAttack();
+    }
+    else{
+      enemyAttack();
+    }
+  }
+  if(isBleed){
+    effectCountBleed+=1;
+    if(effectCountBleed===3){
+      isConfuse = false;
+    }
+    // blind, hit itself, do nothing,
+    const isBleedEffect = Math.floor(Math.random()*100+1);
+    
+    if(isBleedEffect>=0 && isBleedEffect<80){
+      text.innerText += "The enemy is 'Bleed' and it takes 10 damage.";
+      if(!currentHealth<=0){
+        const bleedDamage =20;
+        currentMonsterHealth = Math.max(0,currentMonsterHealth-bleedDamage);
+        enemyHealth.innerText = `Enemy Health: ${currentMonsterHealth}/${wildEnemy[0].health}`;
+        Maxenemy = Math.max(0,Maxenemy-10);
+        healthStat.querySelector('span').innerText = `${currentHealth}/${health}`;
+        currentHealth.innerText = `Enemy Health: ${currentHealth}/${health}`;
+      }
+      else{
+        text.innerText = `You have defeated ${wildEnemy[0].name}.`;
+        gold += wildEnemy[0].power;
+        goldStat.querySelector('span').innerText = gold;
+        await new Promise(resolve => setTimeout(()=>{
+          if (monsterStats) {
+            monsterStats.remove();
+            isConfuse = false;
+            isBleed = false;
+            isPoison = false;
+          }
+          guild();
+        },2000))
+          }
+    }
+    else if(isBleedEffect>=80 && isBleedEffect<=100){
+      text.innerText = "The enemy have resisted the bleed";
+      isBleed = false;      
+      enemyAttack();
+    }
+    else{
+      enemyAttack();
+    }
+  }
   if(currentMonsterHealth<=0){
     text.innerText = `You have defeated ${wildEnemy[0].name}.`;
     gold += wildEnemy[0].power;
@@ -697,6 +904,9 @@ const attack = async () => {
     await new Promise(resolve => setTimeout(()=>{
       if (monsterStats) {
         monsterStats.remove();
+        isConfuse = false;
+        isBleed = false;
+        isPoison = false;
       }
       guild();
     },2000))
@@ -706,19 +916,139 @@ const attack = async () => {
     // }
     // guild();
   }
+  // if(isConfuse){
+  //   effectCountConfuse+=1;
+  //   if(effectCountConfuse===3){
+  //     isConfuse = false;
+  //   }
+  // }
   enemyAttack();
 };
-const caveattack = async() => {
+const caveattack = async () => {
   let monsterStats = document.querySelector('.monsterstat');
   let enemyHealth = document.querySelector('.monsterHealth');
   text.innerText = " You attack it with your " + currentWeapon[0] + ".";
   const myWeapon = weapons.find(weapon => weapon.name === currentWeapon[0])?.power;
   const enemyWeapon = caveEnemy[0].power;
-  const Maxenemy = caveEnemy[0].health;
-
+  let Maxenemy = caveEnemy[0].health;
+  
   currentMonsterHealth = Math.max(0,currentMonsterHealth-myWeapon);
   enemyHealth.innerText = `Enemy Health: ${currentMonsterHealth}/${caveEnemy[0].health}`;
   
+  if(isConfuse){
+    effectCountConfuse+=1;
+    if(effectCountConfuse===3){
+      isConfuse = false;
+    }
+    // blind, hit itself, do nothing,
+    const isConfuseEffect = Math.floor(Math.random()*100+1);
+    if(isConfuseEffect>=20){
+      text.innerText = "The enemy is 'Confuse' and it did nothing.";
+    }
+    else if(isConfuseEffect>20 && isConfuseEffect<=40){
+      text.innerText = "The enemy is 'Confuse' and it hit itself";
+      const enemyWeapon = caveEnemy[0].power;
+      Maxenemy = caveEnemy[0].health;
+      
+      Maxenemy = Math.max(0,Maxenemy-enemyWeapon);
+      healthStat.querySelector('span').innerText = `${currentHealth}/${health}`;
+      currentHealth.innerText = `Enemy Health: ${currentHealth}/${health}`;
+      
+    }
+    else if(isConfuseEffect>40 && isConfuseEffect<=60){
+      text.innerText = "The enemy is 'Confuse' and it miss it's attack";
+    }
+    else{
+      enemyAttackCave();
+    }
+    console.log(effectCount);
+  }
+  if(isPoison){
+    effectCountPoison+=1;
+    if(effectCountPoison===3){
+      isConfuse = false;
+    }
+    // blind, hit itself, do nothing,
+    const isPoisonEffect = Math.floor(Math.random()*100+1);
+    
+    if(isPoisonEffect>=0 && isPoisonEffect<80){
+      text.innerText += "The enemy is 'Poison' and it takes 10 damage.";
+      if(!currentHealth<=0){
+        const poisondamage = 10;
+        currentMonsterHealth = Math.max(0,currentMonsterHealth-poisondamage);
+        enemyHealth.innerText = `Enemy Health: ${currentMonsterHealth}/${caveEnemy[0].health}`;
+        Maxenemy = Math.max(0,Maxenemy-10);
+        healthStat.querySelector('span').innerText = `${currentHealth}/${health}`;
+        currentHealth.innerText = `Enemy Health: ${currentHealth}/${health}`;
+        console.log("poison works");
+      }
+      else{
+        console.log("poison dismissed");
+        text.innerText = `You have defeated ${caveEnemy[0].name}.`;
+        gold += caveEnemy[0].power;
+        goldStat.querySelector('span').innerText = gold;
+        await new Promise(resolve => setTimeout(()=>{
+          if (monsterStats) {
+            monsterStats.remove();
+            isConfuse = false;
+            isBleed = false;
+            isPoison = false;
+          }
+          guild();
+        },2000))
+          }
+    }
+    else if(isPoisonEffect>=80 && isPoisonEffect<=100){
+      text.innerText = "The enemy have resisted the poison";
+      isPoison = false;      
+      enemyAttackCave();
+    }
+    else{
+      enemyAttackCave();
+    }
+  }
+  if(isBleed){
+    effectCountBleed+=1;
+    if(effectCountBleed===3){
+      isConfuse = false;
+    }
+    // blind, hit itself, do nothing,
+    const isBleedEffect = Math.floor(Math.random()*100+1);
+    
+    if(isBleedEffect>=0 && isBleedEffect<80){
+      text.innerText += "The enemy is 'Bleed' and it takes 10 damage.";
+      if(!currentHealth<=0){
+        const bleedDamage =20;
+        currentMonsterHealth = Math.max(0,currentMonsterHealth-bleedDamage);
+        enemyHealth.innerText = `Enemy Health: ${currentMonsterHealth}/${caveEnemy[0].health}`;
+        Maxenemy = Math.max(0,Maxenemy-10);
+        healthStat.querySelector('span').innerText = `${currentHealth}/${health}`;
+        currentHealth.innerText = `Enemy Health: ${currentHealth}/${health}`;
+      }
+      else{
+        text.innerText = `You have defeated ${caveEnemy[0].name}.`;
+        gold += caveEnemy[0].power;
+        goldStat.querySelector('span').innerText = gold;
+        await new Promise(resolve => setTimeout(()=>{
+          if (monsterStats) {
+            monsterStats.remove();
+            isConfuse = false;
+            isBleed = false;
+            isPoison = false;
+          }
+          guild();
+        },2000))
+          }
+    }
+    else if(isBleedEffect>=80 && isBleedEffect<=100){
+      text.innerText = "The enemy have resisted the bleed";
+      isBleed = false;      
+      enemyAttackCave();
+    }
+    else{
+      enemyAttackCave();
+    }
+  }
   if(currentMonsterHealth<=0){
     text.innerText = `You have defeated ${caveEnemy[0].name}.`;
     gold += caveEnemy[0].power;
@@ -726,6 +1056,9 @@ const caveattack = async() => {
     await new Promise(resolve => setTimeout(()=>{
       if (monsterStats) {
         monsterStats.remove();
+        isConfuse = false;
+        isBleed = false;
+        isPoison = false;
       }
       guild();
     },2000))
@@ -735,18 +1068,65 @@ const caveattack = async() => {
     // }
     // guild();
   }
-
+  // if(isConfuse){
+  //   effectCountConfuse+=1;
+  //   if(effectCountConfuse===3){
+  //     isConfuse = false;
+  //   }
+  // }
   enemyAttack();
-
 };
+// const caveattack = async() => {
+//   let monsterStats = document.querySelector('.monsterstat');
+//   let enemyHealth = document.querySelector('.monsterHealth');
+//   text.innerText = " You attack it with your " + currentWeapon[0] + ".";
+//   const myWeapon = weapons.find(weapon => weapon.name === currentWeapon[0])?.power;
+//   const enemyWeapon = caveEnemy[0].power;
+//   const Maxenemy = caveEnemy[0].health;
+
+//   currentMonsterHealth = Math.max(0,currentMonsterHealth-myWeapon);
+//   enemyHealth.innerText = `Enemy Health: ${currentMonsterHealth}/${caveEnemy[0].health}`;
+  
+//   if(currentMonsterHealth<=0){
+//     text.innerText = `You have defeated ${caveEnemy[0].name}.`;
+//     gold += caveEnemy[0].power;
+//     goldStat.querySelector('span').innerText = gold;
+//     await new Promise(resolve => setTimeout(()=>{
+//       if (monsterStats) {
+//         monsterStats.remove();
+//       }
+//       guild();
+//     },2000))
+//     // const remove = document.querySelector('.monsterstat');
+//     // if (remove) {
+//     //   remove.remove();
+//     // }
+//     // guild();
+//   }
+
+//   enemyAttack();
+
+// };
 const enemyAttack = async() =>{
   const enemyWeapon = wildEnemy[0].power;
-  const Maxenemy = wildEnemy[0].health;
+  Maxenemy = wildEnemy[0].health;
   
   currentHealth = Math.max(0,currentHealth-enemyWeapon);  
   healthStat.querySelector('span').innerText = `${currentHealth}/${health}`;  
   text.innerText += "The " + caveEnemy[0].name + " attacks.";
   currentHealth.innerText = `Enemy Health: ${currentHealth}/${health}`;
+  if(currentHealth<=0){
+    Defeat();
+  }
+}
+const enemyAttackCave = async() =>{
+  const enemyWeapon = caveEnemy[0].power;
+  Maxenemy = caveEnemy[0].health;
+  
+  currentHealth = Math.max(0,currentHealth-enemyWeapon);  
+  healthStat.querySelector('span').innerText = `${currentHealth}/${health}`;  
+  text.innerText += "The " + caveEnemy[0].name + " attacks.";
+  currentHealth.innerText = `Enemy Health: ${currentHealth}/${Maxenemy}`;
   if(currentHealth<=0){
     Defeat();
   }
@@ -821,49 +1201,14 @@ const loc =[
     },
     {
       name: "Back",
-      "button text": ["Attack","Skills","Dodge","Flee"],
-      "button func" :[attack,activeSkill,dodge,flee]
+      "button text": ["AttackWILD","Skills","Dodge","Flee"],
+      "button func" :[attack,activeSkill,dodge,flee],
+      text: "The enemy is right infront of you, fight or flight!"
+    },
+    {
+      name: "BackCave",
+      "button text": ["Attackcave","Skills","Dodge","Flee"],
+      "button func" :[caveattack,activeSkill,dodge,flee],
+      text: "The enemy is right infront of you, fight or flight!"
     }
 ];
-/* dps  
-// Check if poison skill is active
-  if (currentSkill.includes("Poison")) {
-    text.innerText = `You attack with your ${currentWeapon[0]} and apply poison to ${currentEnemy}!`;
-
-    // Apply base weapon damage
-    currentEnemyHealth -= baseDamage;
-    text.innerText += ` You deal ${baseDamage} damage. Enemy health is now ${currentEnemyHealth}.`;
-
-    // If poison is not already applied, apply poison damage over time
-    if (!currentEnemy.isPoisoned) {
-      currentEnemy.isPoisoned = true;  // Mark the enemy as poisoned to avoid multiple poison applications
-      let poisonDamage = 5;  // Damage per tick
-      let poisonDuration = 5; // Number of ticks (duration of poison effect)
-      
-      let poisonInterval = setInterval(() => {
-        if (poisonDuration > 0 && currentEnemyHealth > 0) {
-          currentEnemyHealth -= poisonDamage;
-          text.innerText += ` Poison deals ${poisonDamage} damage. Enemy health is now ${currentEnemyHealth}.`;
-          poisonDuration--;
-        } else {
-          clearInterval(poisonInterval); // Stop poison when duration ends or enemy dies
-          currentEnemy.isPoisoned = false; // Reset poison state when effect ends
-          if (currentEnemyHealth <= 0) {
-            text.innerText += ` You have defeated ${currentEnemy}!`;
-            currentEnemy = null; // Reset enemy after defeat
-          }
-        }
-      }, 1000); // Poison ticks every second
-    }
-  } else {
-    // If no poison skill, just attack with weapon
-    text.innerText = `You attack with your ${currentWeapon[0]} and deal ${baseDamage} damage to ${currentEnemy}.`;
-    currentEnemyHealth -= baseDamage;
-    text.innerText += ` Enemy health is now ${currentEnemyHealth}.`;
-
-    if (currentEnemyHealth <= 0) {
-      text.innerText += ` You have defeated ${currentEnemy}!`;
-      currentEnemy = null; // Reset enemy after defeat
-    }
-  }
-*/
