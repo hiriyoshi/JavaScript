@@ -11,29 +11,38 @@ const conversionRates = {
 };
 
 const convert = () => {
-    const input = parseFloat(document.getElementById('inputValue').value); 
+    const input1 = parseFloat(document.getElementById('inputValue1').value);
+    const input2 = parseFloat(document.getElementById('inputValue2').value);
     const fromUnit = document.getElementById('fromUnit').value;
     const toUnit = document.getElementById('toUnit').value;
-    const result = document.getElementById('result');
 
-    if (isNaN(input)) {
-        result.textContent = 'Please enter a valid number.';
-        return;
+    let result;
+    if (!isNaN(input1)) {
+        result = input1 * conversionRates[fromUnit][toUnit];
+        document.getElementById('inputValue2').value = result.toFixed(2);
+    } 
+    else if (!isNaN(input2)) {
+        result = input2 * conversionRates[toUnit][fromUnit];
+        document.getElementById('inputValue1').value = result.toFixed(2);
     }
-    const converted = input * conversionRates[fromUnit][toUnit];
-    const formattedResult = Number.isInteger(converted) ? converted : converted.toFixed(2);
-    result.textContent = `Converted: ${formattedResult} ${toUnit}`;
-    result.style.color = "";
-    animateCar(formattedResult);
+    if (result) {
+        animateCar(result);
+    }
 };
 
 function animateCar(distance) {
     let car = document.getElementById('car');
+    let carDistanceText = document.getElementById('carDistance');
     let converter = document.querySelector('.converter');
     let maxCarTravel = converter.clientWidth - car.clientWidth - 130;
-    let maxDistance = 1000;
-    let carDistance = Math.min((distance / maxDistance) * maxCarTravel, maxCarTravel); 
+    let maxDistance = 1000; 
+    let carDistance = Math.min((distance / maxDistance) * maxCarTravel, maxCarTravel);
+    
     car.style.left = `${carDistance}px`;
+    carDistanceText.textContent = `Distance: ${distance.toFixed(2)} ${document.getElementById('toUnit').value}`;
 }
-const button = document.getElementById('convertButton');
-button.addEventListener('click', convert);
+
+document.getElementById('inputValue1').addEventListener('input', convert);
+document.getElementById('inputValue2').addEventListener('input', convert);
+document.getElementById('fromUnit').addEventListener('change', convert);
+document.getElementById('toUnit').addEventListener('change', convert);

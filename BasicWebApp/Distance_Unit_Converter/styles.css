@@ -1,94 +1,74 @@
-body { 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    background: radial-gradient(circle,#0140ae,#001F54);
-    font-family: "Tomorrow",sans-serif;
-    font-weight: 800;
-    font-size: 18px;
-}
-.converter { 
-    font-family: "Tomorrow",Impact, sans-serif;
-    text-align: center; 
-    padding: 20px; 
-    color: #ffffff;
-    width: 800px;    
-}
-.converter h3{
-    font-size: 35px;
-}
-#fromUnit, #toUnit{
-    margin: 10px;
-    padding: 20px;
-    width: 200px;
-}
-input, select { 
-    margin: 5px 0; 
-    padding: 5px; 
-    width: 100px; 
-    font-size: 20px;
-    font-family: 'Courier New', Courier, monospace;
-}
-input{
-    width: 410px;
-    height: 50px;
-    text-align: center;
-}
 
-.submit button {
-    padding: 10px 20px;
-    background-color: #0353a4;
-    color: white;
-    border-radius: 5px;
-    border: 1px rgb(0, 0, 0) solid;
-    cursor: pointer;
-    width: 425px;
-    height: 80px;
-    font-size: 30px;
-}
-#result{
-    font-size: 40px;
-}
-.result-wrapper{
-    margin: 50px;
-}
-
-.submit button:hover {
-    background-color: #0466c8;
-    color: black;
-}
-
-/* Progress Bar */
-/* Progress Bar */
-.progress-container {
-    width: 100%;
-    background-color: #000; /* Light gray for the container */
-    background-image: url('/images/road.png'); 
-    height: 100px;
-    border-radius: 5px;
-    position: relative; /* For car positioning */
-}
-
-
-/* Car Animation */
-.car-animation {
-    position: absolute;
-    top: -15px; /* Adjust to center vertically in progress bar */
-    left: 0;
-    width: 80px;
-    height: 80px; /* Adjust size */
+body {
+    margin: 0;
     display: flex;
-    justify-content: center; /* Center the image */
-    align-items: center; /* Center the image */
-    transition: left 1s ease-in-out;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle, #0140ae, #001F54);
+    font-family: Georgia, sans-serif;
+    font-size: 24px;
+    height: 100vh;
 }
 
+.converter {
+    background: linear-gradient(to bottom right,  #979dac,#0353a4);
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    padding: 30px;
+    color: #190101;
+    width: 600px;
+}
 
+.converter h3 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    
+}
+
+.input-container {
+    margin: 15px 0;
+}
+
+input, select {
+    font-size: 20px;
+    padding: 10px;
+    margin: 5px;
+    border: 2px solid #ffffff;
+    border-radius: 5px;
+    transition: border 0.3s ease;
+}
+
+input:focus, select:focus {
+    border-color: #35b8f8; 
+}
+.road {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/road.png'); 
+    background-size: cover;
+    border-radius: 5px;
+}
 #car {
     position: absolute;
     left: 0;
-    bottom: 0px;
-    transition: left 1s ease-in-out;
+    bottom: 5;
     width: 80px;
     height: 80px;
+    transition: left 1s ease-in-out;
+}
+#carDistance{
+    position: absolute; 
+    bottom: -10px; 
+    left: 0; 
+    color: #fff; 
+    font-size: 16px;
+}
+.car-animation {
+    position: relative;
+    width: 100%;
+    height: 100px;
 }
