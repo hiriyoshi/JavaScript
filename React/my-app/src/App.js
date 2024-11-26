@@ -1,19 +1,26 @@
 import React from "react";
 
 const App = () => {
-  const greeting = "Hello, React!";
+  const isUserLoggedIn = true;
+  const userList = ["John", "Jane", "Alex"];
 
   return (
     <div>
-      <h1>{greeting}</h1>
-      <Welcome name="Alice" />
-      <Welcome name="Bob" />
+      <h1>Welcome, {isUserLoggedIn ? "User" : "Guest"}</h1>
+      <ul>
+        {userList.map((user) => (
+          <li key={user}>{user}</li>
+        ))}
+      </ul>
+      <style>
+        {`
+        h1 {
+        color: blue;
+        }
+        `}
+      </style>
     </div>
   );
-};
-
-const Welcome = (props) => {
-  return <p>Welcome, {props.name}!</p>;
 };
 
 export default App;
